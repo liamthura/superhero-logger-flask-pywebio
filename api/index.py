@@ -21,6 +21,7 @@ from sqlalchemy.orm import Mapped, mapped_column, sessionmaker, declarative_base
 
 app = Flask(__name__)
 # Concecting to the database using SQLAlchemy on Render.com
+# Insert your own PostgresSQL database URI here -- remember to change the postgres:// to postgresql://
 app.config[
     "SQLALCHEMY_DATABASE_URI"] = "postgresql://superhero_logger_user:DJoKXpCBsqY1skxPvHVsL0K6RjdQWkpu@dpg-cp5shko21fec73ebdrfg-a.frankfurt-postgres.render.com/superhero_logger"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -205,6 +206,8 @@ def main():
 * The app does not make use of Flask's routing capabilities. Routing could be added to the app to create a more structured application.
 
 Made by Khant Thura / Liam with <3
+Unfortunately, Render free database only works for 30-days, if you want to clone this project feel free to do so.
+(Github Repo for Simple Superhero Logger)[https://github.com/liamthura/superhero-logger-flask-pywebio/tree/main]
     ''')
 
     if valid_user is None:
