@@ -60,7 +60,8 @@ class Hero(db.Model):
     def __repr__(self):
         return f"<Hero(id= {self.id}, name= {self.name}, secret_name= {self.secret_name}, age= {self.age})>"
 
-db.create_all()
+with app.app_context():
+    db.create_all()
     
 
 # global variables
