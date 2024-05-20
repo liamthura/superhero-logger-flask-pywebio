@@ -17,4 +17,3 @@ user-agents==2.2.0
 Werkzeug==3.0.3
 zipp==3.18.2
 flask_sqlalchemy
-psycopg2
