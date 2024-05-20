@@ -13,7 +13,7 @@ from sqlalchemy.orm import Mapped, mapped_column, sessionmaker, declarative_base
 
 app = Flask(__name__)
 app.config[
-    "SQLALCHEMY_DATABASE_URI"] = "postgresql://default:UcK1XulWN4AB@ep-tiny-sound-a2lz6d2f.eu-central-1.aws.neon.tech:5432/verceldb?sslmode=require"
+    "SQLALCHEMY_DATABASE_URI"] = "postgresql://superhero_logger_user:DJoKXpCBsqY1skxPvHVsL0K6RjdQWkpu@dpg-cp5shko21fec73ebdrfg-a.frankfurt-postgres.render.com/superhero_logger"
 # Initialize SQLAlchemy and defining a simple Book model
 db = SQLAlchemy(app)
 
