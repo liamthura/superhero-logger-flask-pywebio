@@ -208,7 +208,7 @@ def main():
 
 Made by Khant Thura / Liam with <3
 Unfortunately, Render free database only works for 30-days, if you want to clone this project feel free to do so.
-(Github Repo for Simple Superhero Logger)[https://github.com/liamthura/superhero-logger-flask-pywebio/tree/main]
+[Github Repo for Simple Superhero Logger](https://github.com/liamthura/superhero-logger-flask-pywebio/tree/main)
     ''')
 
     if valid_user is None:
