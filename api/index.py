@@ -61,8 +61,8 @@ class Hero(db.Model):
         return f"<Hero(id= {self.id}, name= {self.name}, secret_name= {self.secret_name}, age= {self.age})>"
 
 
-app.app_context().push()
-db.create_all()
+with app.app_context():
+    db.create_all()
 
 # global variables
 valid_user = None
@@ -110,26 +110,27 @@ def add_user(user_data):
     clear()
     user_role = 'standard'
     try:
-        user_exists = User.query.filter_by(username=user_data['name']).first()
-        if user_exists is not None:
-            raise ValueError('User already exists')
-        security_data = input_group('Security Validation', [
-            input('Confirm password', type=PASSWORD, name='confirm_password', required=True),
-            checkbox("", options=['Make user an Administrator'], name='is_super_user', required=False)
-        ], cancelable=True)
-        if security_data is None:
-            raise ValueError('Registration cancelled')
-        confirm_password = security_data['confirm_password']
-        if user_data['password'] != confirm_password:
-            toast(f'Passwords do not match', color='error')
-            add_user(user_data)
-        else:
-            if security_data['is_super_user']:
-                user_role = 'super'
-            new_user = User(username=user_data['name'], password=user_data['password'], role=user_role)
-            db.session.add(new_user)
-            db.session.commit()
-            # print(session.query(User).all())
+        with app.app_context():
+            user_exists = User.query.filter_by(username=user_data['name']).first()
+            if user_exists is not None:
+                raise ValueError('User already exists')
+            security_data = input_group('Security Validation', [
+                input('Confirm password', type=PASSWORD, name='confirm_password', required=True),
+                checkbox("", options=['Make user an Administrator'], name='is_super_user', required=False)
+            ], cancelable=True)
+            if security_data is None:
+                raise ValueError('Registration cancelled')
+            confirm_password = security_data['confirm_password']
+            if user_data['password'] != confirm_password:
+                toast(f'Passwords do not match', color='error')
+                add_user(user_data)
+            else:
+                if security_data['is_super_user']:
+                    user_role = 'super'
+                new_user = User(username=user_data['name'], password=user_data['password'], role=user_role)
+                db.session.add(new_user)
+                db.session.commit()
+                # print(session.query(User).all())
     except SQLAlchemyError:
         toast(f'An error occurred', color='error')
     except ValueError as ve:
@@ -145,7 +146,8 @@ def verify_user(username, password):
     global valid_user
     try:
         # with Session() as session:
-        valid_user = User.query.filter_by(username=username).first()
+        with app.app_context():
+            valid_user = User.query.filter_by(username=username).first()
     except SQLAlchemyError:
         toast(f'An error occurred', color='error')
     else:
@@ -165,8 +167,9 @@ def get_user_id(username=None):
         return valid_user.id
     elif username is not None:
         # with Session() as session:
-        selected_user = User.query.filter_by(username=username).first()
-        return selected_user.id
+        with app.app_context():
+            selected_user = User.query.filter_by(username=username).first()
+            return selected_user.id
     else:
         return None
 
@@ -225,12 +228,14 @@ def add_hero():
     # Create a new hero as an Hero object and add it to db
     global valid_user
     if user_data is not None:
-        new_hero = Hero(name=user_data['name'], secret_name=user_data['secret_name'], age=user_data['age'],
-                        created_by=valid_user.id)
+        with app.app_context():
+            new_hero = Hero(name=user_data['name'], secret_name=user_data['secret_name'], age=user_data['age'],
+                            created_by=valid_user.id)
         try:
             # with Session() as session:
-            db.session.add(new_hero)
-            db.session.commit()
+            with app.app_context():
+                db.session.add(new_hero)
+                db.session.commit()
             # print(session.query(Hero).all())
         except SQLAlchemyError:
             toast(f'An error occurred', color='error')
@@ -247,31 +252,32 @@ def update_hero():
     if selected_data is not None:
         try:
             # with Session() as session:
-            if valid_user.role == 'standard':
-                selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id']),
-                                                       created_by=get_user_id()).first()
-            elif valid_user.role == 'super':
-                selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id'])).first()
-            if selected_hero is None:
-                raise ValueError('Invalid hero ID or not authorized to update this hero')
-            else:
-                update_fields = [
-                    input('Hero\'s name', name='name', required=True, value=str(selected_hero.name)),
-                    input('Hero\'s secret name', name='secret_name', required=True,
-                          value=str(selected_hero.secret_name)),
-                    input('Hero\'s age', name='age', type=NUMBER, required=True, value=str(selected_hero.age))
-                ]
-                new_data = input_group('Update your super hero', update_fields, cancelable=True)
-            print(selected_hero)
-            if new_data is not None:
-                selected_hero.name = new_data['name']
-                selected_hero.secret_name = new_data['secret_name']
-                selected_hero.age = new_data['age']
-                db.session.add(selected_hero)
-                db.session.commit()
-                # print(session.query(Hero).all())
-            else:
-                raise ValueError('No changes made')
+            with app.app_context():
+                if valid_user.role == 'standard':
+                    selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id']),
+                                                           created_by=get_user_id()).first()
+                elif valid_user.role == 'super':
+                    selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id'])).first()
+                if selected_hero is None:
+                    raise ValueError('Invalid hero ID or not authorized to update this hero')
+                else:
+                    update_fields = [
+                        input('Hero\'s name', name='name', required=True, value=str(selected_hero.name)),
+                        input('Hero\'s secret name', name='secret_name', required=True,
+                              value=str(selected_hero.secret_name)),
+                        input('Hero\'s age', name='age', type=NUMBER, required=True, value=str(selected_hero.age))
+                    ]
+                    new_data = input_group('Update your super hero', update_fields, cancelable=True)
+                print(selected_hero)
+                if new_data is not None:
+                    selected_hero.name = new_data['name']
+                    selected_hero.secret_name = new_data['secret_name']
+                    selected_hero.age = new_data['age']
+                    db.session.add(selected_hero)
+                    db.session.commit()
+                    # print(session.query(Hero).all())
+                else:
+                    raise ValueError('No changes made')
         except SQLAlchemyError:
             toast(f'An error occurred', color='error')
         except ValueError as ve:
@@ -298,23 +304,24 @@ def delete_hero():
     if selected_data is not None:
         try:
             # with Session() as session:
-            if valid_user.role == 'standard':
-                selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id']),
-                                                              created_by=get_user_id()).first()
-            elif valid_user.role == 'super':
-                selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id'])).first()
-            if selected_hero is None:
-                raise ValueError('Invalid hero ID or not authorized to delete this hero')
-            else:
-                confirm = input_group("Confirm Deletion", [
-                    input("Confirm the name of the hero to delete", name='hero_name', required=True)],
-                                      cancelable=True)
-                if confirm['hero_name'] != selected_hero.name:
-                    raise ValueError('Hero name does not match')
+            with app.app_context():
+                if valid_user.role == 'standard':
+                    selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id']),
+                                                                  created_by=get_user_id()).first()
+                elif valid_user.role == 'super':
+                    selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id'])).first()
+                if selected_hero is None:
+                    raise ValueError('Invalid hero ID or not authorized to delete this hero')
                 else:
-                    db.session.delete(selected_hero)
-                    db.session.commit()
-                    # print(session.query(Hero).all())
+                    confirm = input_group("Confirm Deletion", [
+                        input("Confirm the name of the hero to delete", name='hero_name', required=True)],
+                                          cancelable=True)
+                    if confirm['hero_name'] != selected_hero.name:
+                        raise ValueError('Hero name does not match')
+                    else:
+                        db.session.delete(selected_hero)
+                        db.session.commit()
+                        # print(session.query(Hero).all())
         # to catch error
         except ValueError as ve:
             toast(f'{str(ve)}', color='error')
@@ -330,8 +337,9 @@ def get_username(user_id=None):
         return valid_user.username
     elif user_id is not None:
         # with Session() as session:
-        selected_user = User.query.filter_by(id=user_id).first()
-        return selected_user.username
+        with app.app_context():
+            selected_user = User.query.filter_by(id=user_id).first()
+            return selected_user.username
     else:
         return 'Guest User'
 
@@ -340,18 +348,20 @@ def get_heroes_table(user):
     table_data = []
     if user is not None:
         # with Session() as session:
-        results = Hero.query.all()
-        for hero in results:
-            if user.role == 'super':
-                table_data.append([str(hero.id), str(hero.name), str(hero.secret_name), str(hero.age),
-                                   str(get_username(hero.created_by))])
-            elif user.role == 'standard':
-                table_data.append([str(hero.id), str(hero.name), str(hero.secret_name), str(hero.age)])
+        with app.app_context():
+            results = Hero.query.all()
+            for hero in results:
+                if user.role == 'super':
+                    table_data.append([str(hero.id), str(hero.name), str(hero.secret_name), str(hero.age),
+                                       str(get_username(hero.created_by))])
+                elif user.role == 'standard':
+                    table_data.append([str(hero.id), str(hero.name), str(hero.secret_name), str(hero.age)])
     else:
         # with Session() as session:
-        results = Hero.query.all()
-        for hero in results:
-            table_data.append([str(hero.id), str(hero.name)])
+        with app.app_context():
+            results = Hero.query.all()
+            for hero in results:
+                table_data.append([str(hero.id), str(hero.name)])
     return table_data
 
 
