@@ -55,7 +55,7 @@ class Hero(db.Model):
     secret_name: Mapped[str]
     age: Mapped[int]
     created_by: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'))
-    # creator: Mapped["User"] = relationship("User", back_populates="heroes")
+    creator: Mapped["User"] = relationship("User", back_populates="heroes")
 
     def __repr__(self):
         return f"<Hero(id= {self.id}, name= {self.name}, secret_name= {self.secret_name}, age= {self.age})>"
