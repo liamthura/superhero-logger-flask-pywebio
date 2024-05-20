@@ -1,3 +1,10 @@
+"""
+This is a simple CRUD application that allows users to log in, register, add, update, and delete heroes.
+The application uses Flask, SQLAlchemy, and PyWebIO to create a simple web application.
+PyWebio is used to create the user interface, while Flask and SQLAlchemy are used to handle the backend logic and database operations.
+I deployed the app to Vercel, and set-up the database (PostgreSQL) on Render.
+"""
+
 from pywebio import *
 from pywebio.input import *
 from pywebio.output import *
@@ -6,28 +13,15 @@ from pywebio import STATIC_PATH, start_server
 import argparse
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import sqlalchemy as sa
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import create_engine, Integer, String, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, sessionmaker, declarative_base, relationship, DeclarativeBase
+from sqlalchemy.orm import Mapped, mapped_column, sessionmaker, declarative_base, relationship
 
 app = Flask(__name__)
 app.config[
     "SQLALCHEMY_DATABASE_URI"] = "postgresql://superhero_logger_user:DJoKXpCBsqY1skxPvHVsL0K6RjdQWkpu@dpg-cp5shko21fec73ebdrfg-a.frankfurt-postgres.render.com/superhero_logger"
-# Initialize SQLAlchemy and defining a simple Book model
+
 db = SQLAlchemy(app)
-
-
-# application = app
-
-# sqlite_file_name = "playground.db"
-# sqlite_url = f"sqlite:///{sqlite_file_name}"
-# db = sa.create_engine(sqlite_url, echo=True)
-# Session = sessionmaker()
-# Base = declarative_base()
-
-
-# valid_user = None
 
 class User(db.Model):
     # id = db.Column(db.Integer, primary_key=True)
@@ -81,6 +75,7 @@ dark_style = """
 
 
 # User login screen
+@app.route('/login', methods=['GET', 'POST'])
 @use_scope('ROOT')
 def user_login():
     clear()  # to clear previous data if there is
@@ -174,6 +169,7 @@ def get_user_id(username=None):
         return None
 
 
+@app.route('/logout', methods=['GET', 'POST'])
 def user_logout():
     clear()
     global valid_user
@@ -182,6 +178,7 @@ def user_logout():
     main()
 
 
+@app.route('/', methods=['GET', 'POST'])
 @use_scope('ROOT',
            clear=True)  # set scope to clear so every time a button is performed, input groups displays are cleared
 def main():
