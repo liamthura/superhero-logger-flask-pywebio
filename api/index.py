@@ -60,9 +60,9 @@ class Hero(db.Model):
     def __repr__(self):
         return f"<Hero(id= {self.id}, name= {self.name}, secret_name= {self.secret_name}, age= {self.age})>"
 
-with app.app_context():
-    db.create_all()
-    
+
+app.app_context().push()
+db.create_all()
 
 # global variables
 valid_user = None
@@ -362,11 +362,11 @@ def toggle_dark_mode():
     main()
 
 
-# app.add_url_rule('/', 'webio_view', webio_view(main), methods=['GET', 'POST', 'OPTIONS'])
-# if __name__ == '__main__':
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument("-p", "--port", type=int, default=8080)
-#     args = parser.parse_args()
-#     start_server(app, port=args.port)
+app.add_url_rule('/', 'webio_view', webio_view(main), methods=['GET', 'POST', 'OPTIONS'])
 if __name__ == '__main__':
-    app.run(debug=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-p", "--port", type=int, default=8080)
+    args = parser.parse_args()
+    start_server(app, port=args.port)
+if __name__ == '__main__':
+    app()
