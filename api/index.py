@@ -248,10 +248,10 @@ def update_hero():
         try:
             # with Session() as session:
             if valid_user.role == 'standard':
-                selected_hero = Hero.query().filter_by(id=int(selected_data['hero_id']),
+                selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id']),
                                                        created_by=get_user_id()).first()
             elif valid_user.role == 'super':
-                selected_hero = Hero.query().filter_by(id=int(selected_data['hero_id'])).first()
+                selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id'])).first()
             if selected_hero is None:
                 raise ValueError('Invalid hero ID or not authorized to update this hero')
             else:
@@ -299,10 +299,10 @@ def delete_hero():
         try:
             # with Session() as session:
             if valid_user.role == 'standard':
-                selected_hero = Hero.query().filter_by(id=int(selected_data['hero_id']),
+                selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id']),
                                                               created_by=get_user_id()).first()
             elif valid_user.role == 'super':
-                selected_hero = Hero.query().filter_by(id=int(selected_data['hero_id'])).first()
+                selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id'])).first()
             if selected_hero is None:
                 raise ValueError('Invalid hero ID or not authorized to delete this hero')
             else:
@@ -330,7 +330,7 @@ def get_username(user_id=None):
         return valid_user.username
     elif user_id is not None:
         # with Session() as session:
-        selected_user = User.query().filter_by(id=user_id).first()
+        selected_user = User.query.filter_by(id=user_id).first()
         return selected_user.username
     else:
         return 'Guest User'
@@ -340,7 +340,7 @@ def get_heroes_table(user):
     table_data = []
     if user is not None:
         # with Session() as session:
-        results = Hero.query().all()
+        results = Hero.query.all()
         for hero in results:
             if user.role == 'super':
                 table_data.append([str(hero.id), str(hero.name), str(hero.secret_name), str(hero.age),
@@ -349,7 +349,7 @@ def get_heroes_table(user):
                 table_data.append([str(hero.id), str(hero.name), str(hero.secret_name), str(hero.age)])
     else:
         # with Session() as session:
-        results = Hero.query().all()
+        results = Hero.query.all()
         for hero in results:
             table_data.append([str(hero.id), str(hero.name)])
     return table_data
