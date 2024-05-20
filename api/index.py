@@ -7,17 +7,18 @@ The app isn't configured to manage sessions for users. Session management could 
 The app does not make use of Flask's routing capabilities. Routing could be added to the app to create a more structured application.
 """
 
+import argparse
+
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from pywebio import *
+from pywebio import start_server
 from pywebio.input import *
 from pywebio.output import *
 from pywebio.platform.flask import webio_view
-from pywebio import STATIC_PATH, start_server
-import argparse
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Integer, ForeignKey
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import create_engine, Integer, String, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, sessionmaker, declarative_base, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 app = Flask(__name__)
 # Concecting to the database using SQLAlchemy on Render.com
