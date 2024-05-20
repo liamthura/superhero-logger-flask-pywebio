@@ -3,6 +3,8 @@ This is a simple CRUD application that allows users to log in, register, add, up
 The application uses Flask, SQLAlchemy, and PyWebIO to create a simple web application.
 PyWebio is used to create the user interface, while Flask and SQLAlchemy are used to handle the backend logic and database operations.
 I deployed the app to Vercel, and set-up the database (PostgreSQL) on Render.
+The app isn't configured to manage sessions for users. Session management could be added to the app to improve the user experience. Could use Flask's session management capabilities to manage user sessions.
+The app does not make use of Flask's routing capabilities. Routing could be added to the app to create a more structured application.
 """
 
 from pywebio import *
@@ -18,10 +20,12 @@ from sqlalchemy import create_engine, Integer, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, sessionmaker, declarative_base, relationship
 
 app = Flask(__name__)
+# Concecting to the database using SQLAlchemy on Render.com
 app.config[
     "SQLALCHEMY_DATABASE_URI"] = "postgresql://superhero_logger_user:DJoKXpCBsqY1skxPvHVsL0K6RjdQWkpu@dpg-cp5shko21fec73ebdrfg-a.frankfurt-postgres.render.com/superhero_logger"
 
 db = SQLAlchemy(app)
+
 
 class User(db.Model):
     # id = db.Column(db.Integer, primary_key=True)
@@ -55,6 +59,7 @@ class Hero(db.Model):
         return f"<Hero(id= {self.id}, name= {self.name}, secret_name= {self.secret_name}, age= {self.age})>"
 
 
+# Use app.app_context() to keep running in app's environment (so we can manage database, access and update data)
 with app.app_context():
     db.create_all()
 
@@ -75,7 +80,6 @@ dark_style = """
 
 
 # User login screen
-@app.route('/login', methods=['GET', 'POST'])
 @use_scope('ROOT')
 def user_login():
     clear()  # to clear previous data if there is
@@ -169,7 +173,6 @@ def get_user_id(username=None):
         return None
 
 
-@app.route('/logout', methods=['GET', 'POST'])
 def user_logout():
     clear()
     global valid_user
@@ -178,7 +181,6 @@ def user_logout():
     main()
 
 
-@app.route('/', methods=['GET', 'POST'])
 @use_scope('ROOT',
            clear=True)  # set scope to clear so every time a button is performed, input groups displays are cleared
 def main():
@@ -252,7 +254,7 @@ def update_hero():
             with app.app_context():
                 if valid_user.role == 'standard':
                     selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id']),
-                                                           created_by=get_user_id()).first()
+                                                         created_by=get_user_id()).first()
                 elif valid_user.role == 'super':
                     selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id'])).first()
                 if selected_hero is None:
@@ -304,7 +306,7 @@ def delete_hero():
             with app.app_context():
                 if valid_user.role == 'standard':
                     selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id']),
-                                                                  created_by=get_user_id()).first()
+                                                         created_by=get_user_id()).first()
                 elif valid_user.role == 'super':
                     selected_hero = Hero.query.filter_by(id=int(selected_data['hero_id'])).first()
                 if selected_hero is None:
