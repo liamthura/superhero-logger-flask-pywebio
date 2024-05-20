@@ -22,8 +22,8 @@ from sqlalchemy.orm import Mapped, mapped_column, sessionmaker, declarative_base
 app = Flask(__name__)
 # Concecting to the database using SQLAlchemy on Render.com
 app.config[
-    "SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres.feqtyrkrcffoqykwnoas:LiamDB@1123@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
-# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    "SQLALCHEMY_DATABASE_URI"] = "postgresql://superhero_logger_user:DJoKXpCBsqY1skxPvHVsL0K6RjdQWkpu@dpg-cp5shko21fec73ebdrfg-a.frankfurt-postgres.render.com/superhero_logger"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
@@ -204,7 +204,7 @@ def main():
 * The app isn't configured to manage sessions for users. Session management could be added to the app to improve the user experience. Could use Flask's session management capabilities to manage user sessions.
 * The app does not make use of Flask's routing capabilities. Routing could be added to the app to create a more structured application.
 
-* Made by Khant Thura / Liam with <3
+Made by Khant Thura / Liam with <3
     ''')
 
     if valid_user is None:
