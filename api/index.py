@@ -23,7 +23,7 @@ app = Flask(__name__)
 # Concecting to the database using SQLAlchemy on Render.com
 app.config[
     "SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres.feqtyrkrcffoqykwnoas:LiamDB@1123@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+# app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
