@@ -24,7 +24,7 @@ app = Flask(__name__)
 # Concecting to the database using SQLAlchemy on Render.com
 # Insert your own PostgresSQL database URI here -- remember to change the postgres:// to postgresql://
 app.config[
-    "SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:Q4X9crf3HHPLBYp8oZeNspSbqA1grTlDSXzqDDE7H1W1t6CX3ga6tCMc9jVIxD1L@s8o8o80sggswkowwck0sk8k0:5432/postgres"
+    "SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:Q4X9crf3HHPLBYp8oZeNspSbqA1grTlDSXzqDDE7H1W1t6CX3ga6tCMc9jVIxD1L@128.140.8.90:5432/postgres"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
